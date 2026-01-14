@@ -22,15 +22,15 @@ export const DialogSelectProvider: Component = () => {
         key={(x) => x?.id}
         items={providers.all}
         filterKeys={["id", "name"]}
-        groupBy={(x) => (popularProviders.includes(x.id) ? t('provider.dialog.category.popular') : t('provider.dialog.category.other'))}
+        groupBy={(x) => (popularProviders.includes(x.id) ? 'Popular' : 'Other')}
         sortBy={(a, b) => {
           if (popularProviders.includes(a.id) && popularProviders.includes(b.id))
             return popularProviders.indexOf(a.id) - popularProviders.indexOf(b.id)
           return a.name.localeCompare(b.name)
         }}
         sortGroupsBy={(a, b) => {
-          if (a.category === t('provider.dialog.category.popular') && b.category !== t('provider.dialog.category.popular')) return -1
-          if (b.category === t('provider.dialog.category.popular') && a.category !== t('provider.dialog.category.popular')) return 1
+          if (a.category === 'Popular' && b.category !== 'Popular') return -1
+          if (b.category === 'Popular' && a.category !== 'Popular') return 1
           return 0
         }}
         onSelect={(x) => {
