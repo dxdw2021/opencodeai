@@ -3,6 +3,7 @@ import { createSimpleContext } from "@opencode-ai/ui/context"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { Dialog } from "@opencode-ai/ui/dialog"
 import { List } from "@opencode-ai/ui/list"
+import { useI18n } from "@/i18n"
 
 const IS_MAC = typeof navigator === "object" && /(Mac|iPod|iPhone|iPad)/.test(navigator.platform)
 
@@ -116,6 +117,7 @@ export function formatKeybind(config: string): string {
 
 function DialogCommand(props: { options: CommandOption[] }) {
   const dialog = useDialog()
+  const { t } = useI18n()
   let cleanup: (() => void) | void
   let committed = false
 
@@ -140,10 +142,10 @@ function DialogCommand(props: { options: CommandOption[] }) {
   })
 
   return (
-    <Dialog title="Commands">
+    <Dialog title={t('command.title')}>
       <List
-        search={{ placeholder: "Search commands", autofocus: true }}
-        emptyMessage="No commands found"
+        search={{ placeholder: t('command.searchPlaceholder'), autofocus: true }}
+        emptyMessage={t('command.emptyMessage')}
         items={() => props.options.filter((x) => !x.id.startsWith("suggested.") || !x.disabled)}
         key={(x) => x?.id}
         filterKeys={["title", "description", "category"]}

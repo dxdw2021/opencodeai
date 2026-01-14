@@ -60,6 +60,7 @@ import { ConstrainDragXAxis } from "@/utils/solid-dnd"
 import { navStart } from "@/utils/perf"
 import { DialogSelectDirectory } from "@/components/dialog-select-directory"
 import { useServer } from "@/context/server"
+import { useI18n } from "@/i18n"
 
 export default function Layout(props: ParentProps) {
   const [store, setStore] = createStore({
@@ -94,6 +95,7 @@ export default function Layout(props: ParentProps) {
   const dialog = useDialog()
   const command = useCommand()
   const theme = useTheme()
+  const { locale, setLocale, t } = useI18n()
   const availableThemeEntries = createMemo(() => Object.entries(theme.themes()))
   const colorSchemeOrder: ColorScheme[] = ["system", "light", "dark"]
   const colorSchemeLabel: Record<ColorScheme, string> = {
@@ -101,6 +103,10 @@ export default function Layout(props: ParentProps) {
     light: "Light",
     dark: "Dark",
   }
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "zh-CN", name: "中文" }
+  ]
 
   function cycleTheme(direction = 1) {
     const ids = availableThemeEntries().map(([id]) => id)
@@ -1171,24 +1177,24 @@ export default function Layout(props: ParentProps) {
             <Match when={providers.all().length > 0 && !providers.paid().length && expanded()}>
               <div class="rounded-md bg-background-stronger shadow-xs-border-base">
                 <div class="p-3 flex flex-col gap-2">
-                  <div class="text-12-medium text-text-strong">Getting started</div>
-                  <div class="text-text-base">OpenCode includes free models so you can start immediately.</div>
-                  <div class="text-text-base">Connect any provider to use models, inc. Claude, GPT, Gemini etc.</div>
+                  <div class="text-12-medium text-text-strong">{t('sidebar.gettingStarted')}</div>
+                  <div class="text-text-base">{t('sidebar.gettingStartedText1')}</div>
+                  <div class="text-text-base">{t('sidebar.gettingStartedText2')}</div>
                 </div>
-                <Tooltip placement="right" value="Connect provider" inactive={expanded()}>
+                <Tooltip placement="right" value={t('sidebar.connectProvider')} inactive={expanded()}>
                   <Button
                     class="flex w-full text-left justify-start text-12-medium text-text-strong stroke-[1.5px] rounded-lg rounded-t-none shadow-none border-t border-border-weak-base pl-2.25 pb-px"
                     size="large"
                     icon="plus"
                     onClick={connectProvider}
                   >
-                    Connect provider
+                    {t('sidebar.connectProvider')}
                   </Button>
                 </Tooltip>
               </div>
             </Match>
             <Match when={providers.all().length > 0}>
-              <Tooltip placement="right" value="Connect provider" inactive={expanded()}>
+              <Tooltip placement="right" value={t('sidebar.connectProvider')} inactive={expanded()}>
                 <Button
                   class="flex w-full text-left justify-start text-text-base stroke-[1.5px] rounded-lg px-2"
                   variant="ghost"
@@ -1196,7 +1202,7 @@ export default function Layout(props: ParentProps) {
                   icon="plus"
                   onClick={connectProvider}
                 >
-                  <Show when={expanded()}>Connect provider</Show>
+                  <Show when={expanded()}>{t('sidebar.connectProvider')}</Show>
                 </Button>
               </Tooltip>
             </Match>
@@ -1205,7 +1211,7 @@ export default function Layout(props: ParentProps) {
             placement="right"
             value={
               <div class="flex items-center gap-2">
-                <span>Open project</span>
+                <span>{t('sidebar.openProject')}</span>
                 <Show when={!sidebarProps.mobile}>
                   <span class="text-icon-base text-12-medium">{command.keybind("project.open")}</span>
                 </Show>
@@ -1220,10 +1226,27 @@ export default function Layout(props: ParentProps) {
               icon="folder-add-left"
               onClick={chooseProject}
             >
-              <Show when={expanded()}>Open project</Show>
+              <Show when={expanded()}>{t('sidebar.openProject')}</Show>
             </Button>
           </Tooltip>
-          <Tooltip placement="right" value="Share feedback" inactive={expanded()}>
+          <Tooltip placement="right" value={t('settings.language')} inactive={expanded()}>
+            <DropdownMenu>
+              <DropdownMenu.Trigger as={Button} variant="ghost" size="large" class="flex w-full text-left justify-start text-text-base stroke-[1.5px] rounded-lg px-2">
+                <Icon name="glasses" class="mr-2" />
+                <Show when={expanded()}>{languages.find(lang => lang.code === locale())?.name}</Show>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content>
+                  {languages.map((lang) => (
+                    <DropdownMenu.Item key={lang.code} onSelect={() => setLocale(lang.code as any)}>
+                      <DropdownMenu.ItemLabel>{lang.name}</DropdownMenu.ItemLabel>
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu>
+          </Tooltip>
+          <Tooltip placement="right" value={t('sidebar.shareFeedback')} inactive={expanded()}>
             <Button
               as={"a"}
               href="https://opencode.ai/desktop-feedback"
@@ -1233,7 +1256,7 @@ export default function Layout(props: ParentProps) {
               size="large"
               icon="bubble-5"
             >
-              <Show when={expanded()}>Share feedback</Show>
+              <Show when={expanded()}>{t('sidebar.shareFeedback')}</Show>
             </Button>
           </Tooltip>
         </div>

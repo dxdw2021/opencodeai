@@ -53,6 +53,7 @@ import {
 import { usePlatform } from "@/context/platform"
 import { navMark, navParams } from "@/utils/perf"
 import { same } from "@/utils/same"
+import { useI18n } from "@/i18n"
 
 type DiffStyle = "unified" | "split"
 
@@ -167,6 +168,7 @@ export default function Page() {
   const sdk = useSDK()
   const prompt = usePrompt()
   const permission = usePermission()
+  const { t } = useI18n()
   const sessionKey = createMemo(() => `${params.dir}${params.id ? "/" + params.id : ""}`)
   const tabs = createMemo(() => layout.tabs(sessionKey()))
   const view = createMemo(() => layout.view(sessionKey()))
@@ -418,52 +420,52 @@ export default function Page() {
   command.register(() => [
     {
       id: "session.new",
-      title: "New session",
-      description: "Create a new session",
-      category: "Session",
+      title: t('command.session.new.title'),
+      description: t('command.session.new.description'),
+      category: t('command.category.session'),
       keybind: "mod+shift+s",
       slash: "new",
       onSelect: () => navigate(`/${params.dir}/session`),
     },
     {
       id: "file.open",
-      title: "Open file",
-      description: "Search and open a file",
-      category: "File",
+      title: t('command.file.open.title'),
+      description: t('command.file.open.description'),
+      category: t('command.category.file'),
       keybind: "mod+p",
       slash: "open",
       onSelect: () => dialog.show(() => <DialogSelectFile />),
     },
     {
       id: "terminal.toggle",
-      title: "Toggle terminal",
-      description: "Show or hide the terminal",
-      category: "View",
+      title: t('command.terminal.toggle.title'),
+      description: t('command.terminal.toggle.description'),
+      category: t('command.category.view'),
       keybind: "ctrl+`",
       slash: "terminal",
       onSelect: () => view().terminal.toggle(),
     },
     {
       id: "review.toggle",
-      title: "Toggle review",
-      description: "Show or hide the review panel",
-      category: "View",
+      title: t('command.review.toggle.title'),
+      description: t('command.review.toggle.description'),
+      category: t('command.category.view'),
       keybind: "mod+shift+r",
       onSelect: () => view().reviewPanel.toggle(),
     },
     {
       id: "terminal.new",
-      title: "New terminal",
-      description: "Create a new terminal tab",
-      category: "Terminal",
+      title: t('command.terminal.new.title'),
+      description: t('command.terminal.new.description'),
+      category: t('command.category.terminal'),
       keybind: "ctrl+shift+`",
       onSelect: () => terminal.new(),
     },
     {
       id: "steps.toggle",
-      title: "Toggle steps",
-      description: "Show or hide steps for the current message",
-      category: "View",
+      title: t('command.steps.toggle.title'),
+      description: t('command.steps.toggle.description'),
+      category: t('command.category.view'),
       keybind: "mod+e",
       slash: "steps",
       disabled: !params.id,
@@ -475,68 +477,68 @@ export default function Page() {
     },
     {
       id: "message.previous",
-      title: "Previous message",
-      description: "Go to the previous user message",
-      category: "Session",
+      title: t('command.message.previous.title'),
+      description: t('command.message.previous.description'),
+      category: t('command.category.session'),
       keybind: "mod+arrowup",
       disabled: !params.id,
       onSelect: () => navigateMessageByOffset(-1),
     },
     {
       id: "message.next",
-      title: "Next message",
-      description: "Go to the next user message",
-      category: "Session",
+      title: t('command.message.next.title'),
+      description: t('command.message.next.description'),
+      category: t('command.category.session'),
       keybind: "mod+arrowdown",
       disabled: !params.id,
       onSelect: () => navigateMessageByOffset(1),
     },
     {
       id: "model.choose",
-      title: "Choose model",
-      description: "Select a different model",
-      category: "Model",
+      title: t('command.model.choose.title'),
+      description: t('command.model.choose.description'),
+      category: t('command.category.model'),
       keybind: "mod+'",
       slash: "model",
       onSelect: () => dialog.show(() => <DialogSelectModel />),
     },
     {
       id: "mcp.toggle",
-      title: "Toggle MCPs",
-      description: "Toggle MCPs",
-      category: "MCP",
+      title: t('command.mcp.toggle.title'),
+      description: t('command.mcp.toggle.description'),
+      category: t('command.category.mcp'),
       keybind: "mod+;",
       slash: "mcp",
       onSelect: () => dialog.show(() => <DialogSelectMcp />),
     },
     {
       id: "agent.cycle",
-      title: "Cycle agent",
-      description: "Switch to the next agent",
-      category: "Agent",
+      title: t('command.agent.cycle.title'),
+      description: t('command.agent.cycle.description'),
+      category: t('command.category.agent'),
       keybind: "mod+.",
       slash: "agent",
       onSelect: () => local.agent.move(1),
     },
     {
       id: "agent.cycle.reverse",
-      title: "Cycle agent backwards",
-      description: "Switch to the previous agent",
-      category: "Agent",
+      title: t('command.agent.cycle.reverse.title'),
+      description: t('command.agent.cycle.reverse.description'),
+      category: t('command.category.agent'),
       keybind: "shift+mod+.",
       onSelect: () => local.agent.move(-1),
     },
     {
       id: "model.variant.cycle",
-      title: "Cycle thinking effort",
-      description: "Switch to the next effort level",
-      category: "Model",
+      title: t('command.model.variant.cycle.title'),
+      description: t('command.model.variant.cycle.description'),
+      category: t('command.category.model'),
       keybind: "shift+mod+t",
       onSelect: () => {
         local.model.variant.cycle()
         showToast({
-          title: "Thinking effort changed",
-          description: "The thinking effort has been changed to " + (local.model.variant.current() ?? "Default"),
+          title: t('command.model.variant.cycle.toast.title'),
+          description: t('command.model.variant.cycle.toast.description', { level: local.model.variant.current() ?? t('command.model.variant.cycle.toast.default') }),
         })
       },
     },
@@ -544,9 +546,9 @@ export default function Page() {
       id: "permissions.autoaccept",
       title:
         params.id && permission.isAutoAccepting(params.id, sdk.directory)
-          ? "Stop auto-accepting edits"
-          : "Auto-accept edits",
-      category: "Permissions",
+          ? t('command.permissions.autoaccept.stop')
+          : t('command.permissions.autoaccept.start'),
+      category: t('command.category.permissions'),
       keybind: "mod+shift+a",
       disabled: !params.id || !permission.permissionsEnabled(),
       onSelect: () => {
@@ -555,19 +557,19 @@ export default function Page() {
         permission.toggleAutoAccept(sessionID, sdk.directory)
         showToast({
           title: permission.isAutoAccepting(sessionID, sdk.directory)
-            ? "Auto-accepting edits"
-            : "Stopped auto-accepting edits",
+            ? t('command.permissions.autoaccept.toast.start.title')
+            : t('command.permissions.autoaccept.toast.stop.title'),
           description: permission.isAutoAccepting(sessionID, sdk.directory)
-            ? "Edit and write permissions will be automatically approved"
-            : "Edit and write permissions will require approval",
+            ? t('command.permissions.autoaccept.toast.start.description')
+            : t('command.permissions.autoaccept.toast.stop.description'),
         })
       },
     },
     {
       id: "session.undo",
-      title: "Undo",
-      description: "Undo the last message",
-      category: "Session",
+      title: t('command.session.undo.title'),
+      description: t('command.session.undo.description'),
+      category: t('command.category.session'),
       slash: "undo",
       disabled: !params.id || visibleUserMessages().length === 0,
       onSelect: async () => {
@@ -594,9 +596,9 @@ export default function Page() {
     },
     {
       id: "session.redo",
-      title: "Redo",
-      description: "Redo the last undone message",
-      category: "Session",
+      title: t('command.session.redo.title'),
+      description: t('command.session.redo.description'),
+      category: t('command.category.session'),
       slash: "redo",
       disabled: !params.id || !info()?.revert?.messageID,
       onSelect: async () => {
@@ -623,9 +625,9 @@ export default function Page() {
     },
     {
       id: "session.compact",
-      title: "Compact session",
-      description: "Summarize the session to reduce context size",
-      category: "Session",
+      title: t('command.session.compact.title'),
+      description: t('command.session.compact.description'),
+      category: t('command.category.session'),
       slash: "compact",
       disabled: !params.id || visibleUserMessages().length === 0,
       onSelect: async () => {
@@ -634,8 +636,8 @@ export default function Page() {
         const model = local.model.current()
         if (!model) {
           showToast({
-            title: "No model selected",
-            description: "Connect a provider to summarize this session",
+            title: t('command.session.compact.toast.title'),
+            description: t('command.session.compact.toast.description'),
           })
           return
         }
@@ -648,9 +650,9 @@ export default function Page() {
     },
     {
       id: "session.fork",
-      title: "Fork from message",
-      description: "Create a new session from a previous message",
-      category: "Session",
+      title: t('command.session.fork.title'),
+      description: t('command.session.fork.description'),
+      category: t('command.category.session'),
       slash: "fork",
       disabled: !params.id || visibleUserMessages().length === 0,
       onSelect: () => dialog.show(() => <DialogFork />),
