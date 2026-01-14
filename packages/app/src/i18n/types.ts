@@ -129,6 +129,10 @@ export interface Translations {
         title: string
         description: string
       }
+      description: string
+    }
+    init: {
+      description: string
     }
     steps: {
       toggle: {
@@ -203,5 +207,19 @@ export interface Translations {
     networkError: string
     serverError: string
     unknownError: string
+  }
+  provider: {
+    dialog: {
+      title: string
+      searchPlaceholder: string
+      category: {
+        popular: string
+        other: string
+      }
+      recommended: string
+      anthropic: {
+        description: string
+      }
+    }
   }
 }

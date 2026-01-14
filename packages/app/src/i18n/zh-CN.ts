@@ -128,7 +128,11 @@ export const zhCN: Translations = {
       toggle: {
         title: '切换审查',
         description: '显示或隐藏审查面板'
-      }
+      },
+      description: '审查更改 [commit|branch|pr]，默认为未提交的更改'
+    },
+    init: {
+      description: '创建/更新 AGENTS.md'
     },
     steps: {
       toggle: {
@@ -203,5 +207,19 @@ export const zhCN: Translations = {
     networkError: '网络错误',
     serverError: '服务器错误',
     unknownError: '未知错误'
+  },
+  provider: {
+    dialog: {
+      title: '连接提供商',
+      searchPlaceholder: '搜索提供商',
+      category: {
+        popular: '热门',
+        other: '其他'
+      },
+      recommended: '推荐',
+      anthropic: {
+        description: '使用 Claude Pro/Max 或 API 密钥连接'
+      }
+    }
   }
 }

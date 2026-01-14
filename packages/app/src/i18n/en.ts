@@ -128,7 +128,11 @@ export const en: Translations = {
       toggle: {
         title: 'Toggle review',
         description: 'Show or hide the review panel'
-      }
+      },
+      description: 'review changes [commit|branch|pr], defaults to uncommitted'
+    },
+    init: {
+      description: 'create/update AGENTS.md'
     },
     steps: {
       toggle: {
@@ -203,5 +207,19 @@ export const en: Translations = {
     networkError: 'Network error',
     serverError: 'Server error',
     unknownError: 'Unknown error'
+  },
+  provider: {
+    dialog: {
+      title: 'Connect provider',
+      searchPlaceholder: 'Search providers',
+      category: {
+        popular: 'Popular',
+        other: 'Other'
+      },
+      recommended: 'Recommended',
+      anthropic: {
+        description: 'Connect with Claude Pro/Max or API key'
+      }
+    }
   }
 }
