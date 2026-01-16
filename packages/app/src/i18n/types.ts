@@ -36,6 +36,10 @@ export interface Translations {
     temperature: string
     maxTokens: string
     topP: string
+    renderEarlier: string
+    loadingEarlier: string
+    loadEarlier: string
+    filesChanged: string
   }
   file: {
     openFile: string

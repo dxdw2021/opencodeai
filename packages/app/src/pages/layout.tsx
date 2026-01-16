@@ -99,9 +99,9 @@ export default function Layout(props: ParentProps) {
   const availableThemeEntries = createMemo(() => Object.entries(theme.themes()))
   const colorSchemeOrder: ColorScheme[] = ["system", "light", "dark"]
   const colorSchemeLabel: Record<ColorScheme, string> = {
-    system: "System",
-    light: "Light",
-    dark: "Dark",
+    system: t('settings.systemTheme'),
+    light: t('settings.lightMode'),
+    dark: t('settings.darkMode'),
   }
   const languages = [
     { code: "en", name: "English" },

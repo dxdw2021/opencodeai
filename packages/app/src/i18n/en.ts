@@ -35,7 +35,11 @@ export const en: Translations = {
     provider: 'Provider',
     temperature: 'Temperature',
     maxTokens: 'Max Tokens',
-    topP: 'Top P'
+    topP: 'Top P',
+    renderEarlier: 'Render earlier messages',
+    loadingEarlier: 'Loading earlier messages...',
+    loadEarlier: 'Load earlier messages',
+    filesChanged: 'Files Changed'
   },
   file: {
     openFile: 'Open File',

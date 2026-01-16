@@ -1034,7 +1034,7 @@ export default function Page() {
                 classes={{ button: "w-full" }}
                 onClick={() => setStore("mobileTab", "session")}
               >
-                Session
+                {t('session.newSession')}
               </Tabs.Trigger>
               <Tabs.Trigger
                 value="review"
@@ -1042,7 +1042,7 @@ export default function Page() {
                 classes={{ button: "w-full" }}
                 onClick={() => setStore("mobileTab", "review")}
               >
-                {reviewCount()} Files Changed
+                {reviewCount()}{t('session.filesChanged')}
               </Tabs.Trigger>
             </Tabs.List>
           </Tabs>
@@ -1127,7 +1127,7 @@ export default function Page() {
                                 class="text-12-medium opacity-50"
                                 onClick={() => setStore("turnStart", 0)}
                               >
-                                Render earlier messages
+                                {t('session.renderEarlier')}
                               </Button>
                             </div>
                           </Show>
@@ -1145,7 +1145,7 @@ export default function Page() {
                                   sync.session.history.loadMore(id)
                                 }}
                               >
-                                {historyLoading() ? "Loading earlier messages..." : "Load earlier messages"}
+                                {historyLoading() ? t('session.loadingEarlier') : t('session.loadEarlier')}
                               </Button>
                             </div>
                           </Show>

@@ -41,10 +41,22 @@ export function I18nProvider(props: ParentProps) {
       // Detect browser language
       const browserLocale = navigator.language as Locale
       console.log('Browser locale:', browserLocale)
+      
+      // Check exact match first
       if (translations[browserLocale]) {
-        console.log('Using browser locale:', browserLocale)
+        console.log('Using exact browser locale:', browserLocale)
         setLocale(browserLocale)
       } else {
+        // Check for language family (e.g., zh for zh-CN)
+        const languageFamily = browserLocale.split('-')[0]
+        console.log('Checking language family:', languageFamily)
+        for (const availableLocale of Object.keys(translations) as Locale[]) {
+          if (availableLocale.split('-')[0] === languageFamily) {
+            console.log('Using matching language family:', availableLocale)
+            setLocale(availableLocale)
+            return
+          }
+        }
         console.log('Using default locale: en')
       }
     }

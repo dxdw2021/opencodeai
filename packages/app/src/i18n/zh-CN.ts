@@ -35,7 +35,11 @@ export const zhCN: Translations = {
     provider: '提供商',
     temperature: '温度',
     maxTokens: '最大 tokens',
-    topP: 'Top P'
+    topP: 'Top P',
+    renderEarlier: '渲染更早的消息',
+    loadingEarlier: '正在加载更早的消息...',
+    loadEarlier: '加载更早的消息',
+    filesChanged: '个文件已更改'
   },
   file: {
     openFile: '打开文件',
