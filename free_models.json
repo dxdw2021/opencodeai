@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "fetchedAt": "2026-04-23T09:43:57.107Z",
+    "apiEndpoint": "https://opencode.ai/zen/v1",
+    "totalModels": 41,
+    "freeModelsCount": 5,
+    "paidModelsCount": 36,
+    "errorModelsCount": 0
+  },
+  "freeModels": [
+    {
+      "id": "gpt-5-nano",
+      "apiKey": "public",
+      "endpoint": "https://opencode.ai/zen/v1/chat/completions",
+      "usage": {
+        "authorization": "Bearer public",
+        "contentType": "application/json"
+      }
+    },
+    {
+      "id": "big-pickle",
+      "apiKey": "public",
+      "endpoint": "https://opencode.ai/zen/v1/chat/completions",
+      "usage": {
+        "authorization": "Bearer public",
+        "contentType": "application/json"
+      }
+    },
+    {
+      "id": "minimax-m2.5-free",
+      "apiKey": "public",
+      "endpoint": "https://opencode.ai/zen/v1/chat/completions",
+      "usage": {
+        "authorization": "Bearer public",
+        "contentType": "application/json"
+      }
+    },
+    {
+      "id": "hy3-preview-free",
+      "apiKey": "public",
+      "endpoint": "https://opencode.ai/zen/v1/chat/completions",
+      "usage": {
+        "authorization": "Bearer public",
+        "contentType": "application/json"
+      }
+    },
+    {
+      "id": "nemotron-3-super-free",
+      "apiKey": "public",
+      "endpoint": "https://opencode.ai/zen/v1/chat/completions",
+      "usage": {
+        "authorization": "Bearer public",
+        "contentType": "application/json"
+      }
+    }
+  ],
+  "paidModels": [
+    {
+      "id": "claude-opus-4-7",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-opus-4-6",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-opus-4-5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-opus-4-1",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-sonnet-4",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-3-5-haiku",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gemini-3.1-pro",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gemini-3-pro",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gemini-3-flash",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.4",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.4-pro",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.3-codex-spark",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.3-codex",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.2",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.2-codex",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.1",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.1-codex-max",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.1-codex",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5.1-codex-mini",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "gpt-5-codex",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "glm-5.1",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "glm-5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "minimax-m2.7",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "minimax-m2.5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "kimi-k2.6",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "kimi-k2.5",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "qwen3.6-plus",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "qwen3.5-plus",
+      "note": "需要有效的 API Key",
+      "error": "Missing API key."
+    },
+    {
+      "id": "ling-2.6-flash-free",
+      "note": "需要有效的 API Key",
+      "error": "Error from provider: Rate limit exceeded: limit_rpm/inclusionai/ling-2.6-flash-20260421/3ee93000-f491-4678-a6f4-3b7febaf1af9. High demand for inclusionai/ling-2.6-flash:free on OpenRouter - limited to 100 requests per minute. Please retry shortly."
+    },
+    {
+      "id": "trinity-large-preview-free",
+      "note": "需要有效的 API Key",
+      "error": "Error from provider: No endpoints found for arcee-ai/trinity-large-preview:free."
+    }
+  ],
+  "errors": [],
+  "exampleRequest": {
+    "curl": "curl https://opencode.ai/zen/v1/chat/completions \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer public\" \\\n  -d '{\"model\": \"gpt-5-nano\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}]}'",
+    "javascript": "const response = await fetch('https://opencode.ai/zen/v1/chat/completions', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'Bearer public'\n  },\n  body: JSON.stringify({\n    model: 'gpt-5-nano',\n    messages: [{ role: 'user', content: 'Hello!' }],\n    stream: false\n  })\n});\nconst data = await response.json();",
+    "python": "import requests\n\nresponse = requests.post(\n    'https://opencode.ai/zen/v1/chat/completions',\n    headers={\n        'Content-Type': 'application/json',\n        'Authorization': 'Bearer public'\n    },\n    json={\n        'model': 'gpt-5-nano',\n        'messages': [{'role': 'user', 'content': 'Hello!'}],\n        'stream': False\n    }\n)\ndata = response.json()"
+  }
+}
