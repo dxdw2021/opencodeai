@@ -43,6 +43,7 @@ import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { ImagePreview } from "@opencode-ai/ui/image-preview"
 import { ModelSelectorPopover } from "@/components/dialog-select-model"
 import { DialogSelectModelUnpaid } from "@/components/dialog-select-model-unpaid"
+import { DialogSummonExpert } from "@/components/dialog-summon-expert"
 import { useProviders } from "@/hooks/use-providers"
 import { useCommand } from "@/context/command"
 import { Persist, persisted } from "@/utils/persist"
@@ -1567,6 +1568,17 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                     variant="ghost"
                   />
                 </TooltipKeybind>
+                <Tooltip placement="top" content="召唤专家">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="text-text-secondary hover:text-accent-primary"
+                    onClick={() => dialog.show(() => <DialogSummonExpert />)}
+                  >
+                    <Icon name="wand" size="small" />
+                    <span class="text-12-regular ml-1">召唤专家</span>
+                  </Button>
+                </Tooltip>
                 <Show
                   when={providers.paid().length > 0}
                   fallback={

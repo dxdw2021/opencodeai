@@ -55,6 +55,7 @@ import { QuestionRoute } from "./question"
 import { Installation } from "@/installation"
 import { MDNS } from "./mdns"
 import { Worktree } from "../worktree"
+import path from "path"
 
 // @ts-ignore This global is needed to prevent ai-sdk from logging warnings to stdout https://github.com/vercel/ai/blob/2dc67e0ef538307f21368db32d5a12345d98831b/packages/ai/src/logger/log-warnings.ts#L85
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -2832,6 +2833,71 @@ export namespace Server {
             })
           },
         )
+        .get("/experts/manifest.json", async (c) => {
+          const projectRoot = path.resolve(import.meta.dir, "../../../../")
+          const manifestPath = path.join(projectRoot, "experts", "manifest.json")
+          const file = Bun.file(manifestPath)
+          const exists = await file.exists()
+          if (!exists) return c.json({ error: "Manifest not found" }, 404)
+          return c.json(JSON.parse(await file.text()))
+        })
+        .get("/experts/avatars/:file", async (c) => {
+          const fileName = c.req.param("file")
+          // 防止路径遍历攻击
+          if (fileName.includes("..") || fileName.includes("/") || fileName.includes("\\")) {
+            return c.body(null, 400)
+          }
+          const projectRoot = path.resolve(import.meta.dir, "../../../../")
+          const avatarsDir = path.join(projectRoot, "experts", "avatars")
+          const avatarPath = path.join(avatarsDir, fileName)
+          // 双重检查确保路径安全
+          const resolvedPath = path.resolve(avatarPath)
+          const resolvedAvatarsDir = path.resolve(avatarsDir)
+          if (!resolvedPath.startsWith(resolvedAvatarsDir)) {
+            return c.body(null, 400)
+          }
+          const file = Bun.file(avatarPath)
+          const exists = await file.exists()
+          if (!exists) return c.body(null, 404)
+          const ext = path.extname(fileName).toLowerCase()
+          const mime =
+            {
+              ".png": "image/png",
+              ".jpg": "image/jpeg",
+              ".jpeg": "image/jpeg",
+              ".gif": "image/gif",
+              ".webp": "image/webp",
+              ".svg": "image/svg+xml",
+            }[ext] || "application/octet-stream"
+          return c.body(await file.arrayBuffer(), 200, {
+            "Content-Type": mime,
+            "Cache-Control": "public, max-age=86400",
+          })
+        })
+        .get("/experts/gallery", async (c) => {
+          const projectRoot = path.resolve(import.meta.dir, "../../../../")
+          const galleryPath = path.join(projectRoot, "expert-gallery.html")
+          const file = Bun.file(galleryPath)
+          const exists = await file.exists()
+          if (!exists) return c.html("<h1>Gallery not found</h1><p>Run the expert integration script first.</p>", 404)
+          const content = await file.text()
+          // Inject backend URL so the gallery can call the server API
+          const injected = content.replace(
+            "</head>",
+            `<script>window.__OPENCODE_SERVER__ = "${_url?.origin ?? c.req.url.replace(/\/experts\/gallery.*$/, "")}";</script>\n</head>`,
+          )
+          return c.html(injected)
+        })
+        .post("/experts/select", async (c) => {
+          const body = await c.req.json().catch(() => ({}))
+          const agentName = body.name
+          if (!agentName)
+            return c.json({ error: "Agent name is required" }, 400)
+            // Publish event for the web app to switch agents
+            // The TUI and web app listen for this via the global event stream
+          ;(Bus as any).publishRaw("experts.select", { name: agentName })
+          return c.json({ success: true, agent: agentName })
+        })
         .all("/*", async (c) => {
           const path = c.req.path
           const response = await proxy(`https://app.opencode.ai${path}`, {

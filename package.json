@@ -73,6 +73,7 @@
     "@opencode-ai/plugin": "workspace:*",
     "@opencode-ai/script": "workspace:*",
     "@opencode-ai/sdk": "workspace:*",
+    "baseline-browser-mapping": "2.10.32",
     "typescript": "catalog:"
   },
   "repository": {

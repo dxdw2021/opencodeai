@@ -287,6 +287,10 @@
     <p class="subtitle">获取模型列表并在线测试 AI 模型</p>
   </div>
 
+  <div id="mockModeBanner" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 12px 24px; text-align: center; color: white; font-weight: 600; border-radius: 8px; margin: 0 auto 24px; max-width: 1200px; display: none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
+    🎭 模拟模式已开启 - 可以测试界面功能！
+  </div>
+
   <div class="container">
     <!-- Fetch Panel -->
     <div class="fetch-panel">
@@ -301,6 +305,9 @@
         </button>
         <button class="btn btn-secondary" onclick="loadDefaultModels()">
           <span>📦</span> 加载默认列表
+        </button>
+        <button class="btn btn-secondary" id="mockModeBtn" onclick="toggleMockMode()">
+          <span>🎭</span> 开启模拟模式
         </button>
       </div>
     </div>
@@ -393,6 +400,7 @@
     const API_URL = 'https://opencode.ai/zen/v1';
     let allModels = [];
     let currentFilter = 'all';
+    let useMockMode = true; // 默认开启模拟模式
     let freeModelsSet = new Set(['gpt-5-nano', 'big-pickle', 'minimax-m2.5-free', 'hy3-preview-free', 'nemotron-3-super-free', 'deepseek-r1-free', 'qwen3-qwen-plus-free', 'o3-mini-free', 'qwen3-qwen-max-free', 'gpt-5-nano']);
 
     // Default models - updated based on OpenCode's available models
@@ -414,8 +422,41 @@
       'big-pickle', 'nemotron-3-super-free',
     ];
 
+    // Mock responses for demonstration
+    const mockResponses = {
+      'Hello! Reply with just "OK".': 'OK',
+      'Hello!': '你好！我是 OpenCode AI 助手，很高兴为你服务。',
+      'What is OpenCode?': 'OpenCode 是一个开源的 AI 编程助手，支持多种大语言模型，帮助开发者更高效地编写代码。',
+      'Write a hello world function in Python': '```python\ndef hello_world():\n    print("Hello, World!")\n\nhello_world()\n```',
+    };
+
+    // Toggle mock mode
+    function toggleMockMode() {
+      useMockMode = !useMockMode;
+      const btn = document.getElementById('mockModeBtn');
+      const banner = document.getElementById('mockModeBanner');
+      if (useMockMode) {
+        btn.className = 'btn btn-green';
+        btn.innerHTML = '✓ 模拟模式开启';
+        banner.style.display = 'block';
+        showToast('已切换到模拟模式，可以测试界面功能！');
+      } else {
+        btn.className = 'btn btn-secondary';
+        btn.innerHTML = '开启模拟模式';
+        banner.style.display = 'none';
+        showToast('已切换到正常模式');
+      }
+    }
+
     // Fetch models from API
     async function fetchModels() {
+      // 在模拟模式下直接使用默认列表
+      if (useMockMode) {
+        loadDefaultModels();
+        showToast('🎭 模拟模式：已加载默认模型列表');
+        return;
+      }
+
       const url = document.getElementById('apiUrl').value.trim();
       if (!url) {
         showToast('请输入 API 地址', true);
@@ -441,7 +482,7 @@
         renderModels();
         showToast(`成功获取 ${allModels.length} 个模型！`);
       } catch (error) {
-        showToast(`获取失败: ${error.message}，使用默认列表`, true);
+        showToast(`获取失败: ${error.message}，使用默认列表。提示：可以开启模拟模式！`, true);
         loadDefaultModels();
       } finally {
         hideLoading();
@@ -539,6 +580,39 @@
       const startTime = Date.now();
 
       try {
+        // Mock mode for demonstration
+        if (useMockMode) {
+          await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 500));
+          const elapsed = Date.now() - startTime;
+          
+          if (stream) {
+            content.style.color = 'var(--text-primary)';
+            const mockText = mockResponses[prompt] || `这是来自 ${model} 的模拟回复！\n\n你说的是: "${prompt}"`;
+            
+            for (let i = 0; i < mockText.length; i += 3) {
+              content.textContent = mockText.slice(0, i + 3);
+              await new Promise(resolve => setTimeout(resolve, 30));
+            }
+            content.textContent = mockText;
+            status.className = 'response-status success';
+            status.textContent = '成功 (流式模拟)';
+          } else {
+            status.className = 'response-status success';
+            status.textContent = '成功 (模拟)';
+            content.style.color = 'var(--accent-green)';
+            content.textContent = mockResponses[prompt] || `这是来自 ${model} 的模拟回复！\n\n你说的是: "${prompt}"`;
+            freeModelsSet.add(model);
+            updateStats();
+            renderModels();
+          }
+          
+          timeDiv.style.display = 'block';
+          document.getElementById('timeValue').textContent = elapsed;
+          btn.disabled = false;
+          btn.innerHTML = '<span>🚀</span> 发送请求';
+          return;
+        }
+
         const response = await fetch(`${url}/chat/completions`, {
           method: 'POST',
           headers: {
@@ -586,7 +660,7 @@
             content.style.color = 'var(--accent-red)';
             content.textContent = JSON.stringify(data, null, 2);
           } else {
-            status.className = 'response-status.success';
+            status.className = 'response-status success';
             status.textContent = '成功';
             content.style.color = 'var(--accent-green)';
             
@@ -603,10 +677,10 @@
         document.getElementById('timeValue').textContent = elapsed;
 
       } catch (error) {
-        status.className = 'response-status.error';
+        status.className = 'response-status error';
         status.textContent = '请求失败';
         content.style.color = 'var(--accent-red)';
-        content.textContent = `错误: ${error.message}`;
+        content.textContent = `错误: ${error.message}\n\n提示：可以尝试开启"模拟模式"来测试界面功能！`;
       }
 
       btn.disabled = false;
@@ -639,6 +713,16 @@
 
     // Init
     loadDefaultModels();
+    // 初始化模拟模式状态
+    const mockBtn = document.getElementById('mockModeBtn');
+    const mockBanner = document.getElementById('mockModeBanner');
+    mockBtn.className = 'btn btn-green';
+    mockBtn.innerHTML = '✓ 模拟模式开启';
+    mockBanner.style.display = 'block';
+    // 显示欢迎提示
+    setTimeout(() => {
+      showToast('🚀 欢迎使用 OpenCode 模型测试工具！已自动开启模拟模式');
+    }, 500);
   </script>
 </body>
 </html>
