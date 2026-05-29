@@ -1568,14 +1568,14 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                     variant="ghost"
                   />
                 </TooltipKeybind>
-                <Tooltip placement="top" content="召唤专家">
+                <Tooltip placement="top" value="召唤专家">
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="small"
                     class="text-text-secondary hover:text-accent-primary"
                     onClick={() => dialog.show(() => <DialogSummonExpert />)}
                   >
-                    <Icon name="wand" size="small" />
+                    <Icon name="brain" size="small" />
                     <span class="text-12-regular ml-1">召唤专家</span>
                   </Button>
                 </Tooltip>

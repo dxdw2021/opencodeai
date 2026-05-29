@@ -2851,11 +2851,13 @@ export async function listen(opts: ListenOptions): Promise<Listener> {
         .post("/experts/select", async (c) => {
           const body = await c.req.json().catch(() => ({}))
           const agentName = body.name
-          if (!agentName)
-            return c.json({ error: "Agent name is required" }, 400)
-            // Publish event for the web app to switch agents
-            // The TUI and web app listen for this via the global event stream
-          ;(Bus as any).publishRaw("experts.select", { name: agentName })
+          if (!agentName) return c.json({ error: "Agent name is required" }, 400)
+          // Publish event for the web app to switch agents
+          // The TUI and web app listen for this via the global event stream
+          GlobalBus.emit("event", {
+            directory: Instance.directory,
+            payload: { type: "experts.select", properties: { name: agentName } },
+          })
           return c.json({ success: true, agent: agentName })
         })
         .all("/*", async (c) => {

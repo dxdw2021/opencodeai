@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenCode 专家浏览器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border: #475569;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 0;
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg));
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--primary-light), var(--info));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--primary);
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .experts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .expert-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .expert-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+    }
+
+    .expert-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .expert-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--info));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .expert-info {
+      flex: 1;
+    }
+
+    .expert-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .expert-title {
+      color: var(--primary-light);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .expert-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .expert-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .expert-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--text);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .quick-prompts {
+      margin-top: 20px;
+    }
+
+    .prompt-item {
+      background: var(--bg-tertiary);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .prompt-item:hover {
+      background: var(--primary);
+    }
+
+    .prompt-text {
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: var(--danger);
+    }
+
+    @media (max-width: 768px) {
+      .experts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>OpenCode 专家浏览器</h1>
+      <p class="subtitle">浏览和调用 200+ 专业 AI 专家</p>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-number" id="totalExperts">-</div>
+          <div class="stat-label">总专家数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="agentExperts">-</div>
+          <div class="stat-label">Agent 专家</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="teamExperts">-</div>
+          <div class="stat-label">团队专家</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="pluginExperts">-</div>
+          <div class="stat-label">插件专家</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索专家名称、技能或描述...">
+      </div>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="agent">Agent</button>
+        <button class="filter-btn" data-filter="team">团队</button>
+        <button class="filter-btn" data-filter="plugin">插件</button>
+      </div>
+    </div>
+
+    <div class="experts-grid" id="expertsGrid">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <div class="modal" id="expertModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">专家详情</h2>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- 动态内容 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 专家数据
+    let experts = [];
+    let currentFilter = 'all';
+
+    // 加载专家数据
+    async function loadExperts() {
+      try {
+        // 尝试从本地加载
+        const response = await fetch('./experts/manifest.json');
+        if (response.ok) {
+          const data = await response.json();
+          experts = data.experts || [];
+          updateStats();
+          renderExperts();
+        } else {
+          // 使用示例数据
+          loadSampleData();
+        }
+      } catch (error) {
+        console.error('加载失败:', error);
+        loadSampleData();
+      }
+    }
+
+    // 示例数据
+    function loadSampleData() {
+      experts = [
+        {
+          id: "ContentCreator",
+          displayName: { zh: "文爆爆", en: "Kai" },
+          profession: { zh: "内容创作专家", en: "Content Creator" },
+          description: { zh: "擅长创作引人入胜的多平台内容，让品牌故事触达目标受众", en: "Skilled at creating engaging multi-platform content" },
+          expertType: "agent",
+          agentName: "content-creator",
+          tags: [{ zh: "内容策略", en: "Content Strategy" }, { zh: "多平台创作", en: "Multi-Platform Creation" }],
+          quickPrompts: [
+            { zh: "我们需要持续创作优质内容来吸引目标用户", en: "We need to consistently create high-quality content" }
+          ]
+        },
+        {
+          id: "DataAnalyticsReporter",
+          displayName: { zh: "数妙妙", en: "Data Analytics Reporter" },
+          profession: { zh: "数据分析专家", en: "Data Analytics Reporter" },
+          description: { zh: "精通数据分析和可视化，提供深度洞察和决策支持", en: "Expert in data analytics and visualization" },
+          expertType: "agent",
+          agentName: "data-analytics-reporter",
+          tags: [{ zh: "数据分析", en: "Data Analytics" }, { zh: "可视化", en: "Visualization" }],
+          quickPrompts: [
+            { zh: "分析用户行为数据并提供优化建议", en: "Analyze user behavior data and provide optimization suggestions" }
+          ]
+        },
+        {
+          id: "ChinaEcommerceOperationsExpert",
+          displayName: { zh: "卖得好", en: "China E-commerce Expert" },
+          profession: { zh: "电商运营专家", en: "China E-commerce Operations Expert" },
+          description: { zh: "精通国内电商平台运营，擅长爆款打造和店铺优化", en: "Expert in domestic e-commerce platform operations" },
+          expertType: "agent",
+          agentName: "china-ecommerce-operations-expert",
+          tags: [{ zh: "电商运营", en: "E-commerce Operations" }, { zh: "爆款打造", en: "Hit Product Creation" }],
+          quickPrompts: [
+            { zh: "制定店铺运营策略提升销量", en: "Develop store operation strategy to increase sales" }
+          ]
+        }
+      ];
+      updateStats();
+      renderExperts();
+    }
+
+    // 更新统计数据
+    function updateStats() {
+      document.getElementById('totalExperts').textContent = experts.length;
+      document.getElementById('agentExperts').textContent = experts.filter(e => e.expertType === 'agent').length;
+      document.getElementById('teamExperts').textContent = experts.filter(e => e.expertType === 'team').length;
+      document.getElementById('pluginExperts').textContent = experts.filter(e => e.expertType === 'plugin').length;
+    }
+
+    // 渲染专家列表
+    function renderExperts() {
+      const grid = document.getElementById('expertsGrid');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      const filtered = experts.filter(expert => {
+        const matchesFilter = currentFilter === 'all' || expert.expertType === currentFilter;
+        const matchesSearch = !searchTerm ||
+          (expert.displayName?.zh || '').toLowerCase().includes(searchTerm) ||
+          (expert.profession?.zh || '').toLowerCase().includes(searchTerm) ||
+          (expert.description?.zh || '').toLowerCase().includes(searchTerm) ||
+          (expert.tags || []).some(tag => (tag.zh || '').toLowerCase().includes(searchTerm));
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="loading">没有找到匹配的专家</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(expert => `
+        <div class="expert-card" onclick="showExpertDetail('${expert.id}')">
+          <div class="expert-header">
+            <div class="expert-avatar">
+              ${getExpertEmoji(expert)}
+            </div>
+            <div class="expert-info">
+              <div class="expert-name">${expert.displayName?.zh || expert.id}</div>
+              <div class="expert-title">${expert.profession?.zh || ''}</div>
+            </div>
+          </div>
+          <div class="expert-description">
+            ${expert.description?.zh || '暂无描述'}
+          </div>
+          <div class="expert-tags">
+            ${(expert.tags || []).map(tag => `<span class="tag">${tag.zh || tag.en}</span>`).join('')}
+          </div>
+          <div class="expert-actions">
+            <button class="btn btn-primary" onclick="event.stopPropagation(); callExpert('${expert.agentName || expert.id}')">
+              调用专家
+            </button>
+            <button class="btn btn-secondary" onclick="event.stopPropagation(); showExpertDetail('${expert.id}')">
+              查看详情
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 获取专家 Emoji
+    function getExpertEmoji(expert) {
+      const emojis = {
+        'agent': '🤖',
+        'team': '👥',
+        'plugin': '🔌'
+      };
+      return emojis[expert.expertType] || '👤';
+    }
+
+    // 显示专家详情
+    function showExpertDetail(expertId) {
+      const expert = experts.find(e => e.id === expertId);
+      if (!expert) return;
+
+      const modal = document.getElementById('expertModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      title.textContent = expert.displayName?.zh || expert.id;
+
+      body.innerHTML = `
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+          <div class="expert-avatar" style="width: 80px; height: 80px; font-size: 3rem;">
+            ${getExpertEmoji(expert)}
+          </div>
+          <div>
+            <h3 style="color: var(--primary-light); margin-bottom: 5px;">${expert.profession?.zh || ''}</h3>
+            <p style="color: var(--text-secondary);">类型: ${expert.expertType}</p>
+            ${expert.agentName ? `<p style="color: var(--text-secondary);">Agent 名称: ${expert.agentName}</p>` : ''}
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px; color: var(--text);">描述</h4>
+          <p style="color: var(--text-secondary); line-height: 1.6;">
+            ${expert.description?.zh || '暂无描述'}
+          </p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px; color: var(--text);">技能标签</h4>
+          <div class="expert-tags">
+            ${(expert.tags || []).map(tag => `<span class="tag">${tag.zh || tag.en}</span>`).join('')}
+          </div>
+        </div>
+
+        ${expert.quickPrompts && expert.quickPrompts.length > 0 ? `
+          <div class="quick-prompts">
+            <h4 style="margin-bottom: 10px; color: var(--text);">快速提问</h4>
+            ${expert.quickPrompts.map(prompt => `
+              <div class="prompt-item" onclick="copyPrompt('${(prompt.zh || '').replace(/'/g, "\\'")}')">
+                <div class="prompt-text">${prompt.zh || prompt.en}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="callExpert('${expert.agentName || expert.id}')">
+            调用专家
+          </button>
+          <button class="btn btn-secondary" onclick="copyAgentCommand('${expert.agentName || expert.id}')">
+            复制命令
+          </button>
+        </div>
+      `;
+
+      modal.classList.add('active');
+    }
+
+    // 调用专家
+    function callExpert(agentName) {
+      const command = `/agent ${agentName}`;
+      navigator.clipboard.writeText(command).then(() => {
+        alert(`已复制命令: ${command}\n\n在 OpenCode 中粘贴执行即可调用该专家。`);
+      }).catch(() => {
+        prompt('请复制以下命令到 OpenCode 中执行:', command);
+      });
+    }
+
+    // 复制 Agent 命令
+    function copyAgentCommand(agentName) {
+      const command = `/agent ${agentName}`;
+      navigator.clipboard.writeText(command).then(() => {
+        alert('命令已复制到剪贴板');
+      });
+    }
+
+    // 复制提问
+    function copyPrompt(prompt) {
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert('提问已复制到剪贴板');
+      });
+    }
+
+    // 关闭模态框
+    document.getElementById('modalClose').addEventListener('click', () => {
+      document.getElementById('expertModal').classList.remove('active');
+    });
+
+    document.getElementById('expertModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('active');
+      }
+    });
+
+    // 搜索和筛选
+    document.getElementById('searchInput').addEventListener('input', renderExperts);
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderExperts();
+      });
+    });
+
+    // 初始化
+    loadExperts();
+  </script>
+</body>
+</html>
