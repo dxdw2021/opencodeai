@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCode 专家中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .search-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .search-box input::placeholder {
+            color: #999;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .agent-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .agent-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+        
+        .agent-info {
+            flex: 1;
+        }
+        
+        .agent-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .agent-type {
+            font-size: 12px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .agent-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .agent-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            padding: 60px;
+        }
+        
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 18px;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-body {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .modal-body p {
+            margin-bottom: 16px;
+        }
+        
+        .command-box {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #333;
+            margin: 16px 0;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .copy-btn:hover {
+            background: #5a6fd6;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OpenCode 专家中心</h1>
+            <p>200+ 专业 AI 专家，助力您的开发工作</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalAgents">-</div>
+                <div class="stat-label">可用专家</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCategories">-</div>
+                <div class="stat-label">专业领域</div>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 搜索专家名称、描述或专业领域...">
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="primary">主要</button>
+            <button class="filter-btn" data-filter="subagent">子代理</button>
+            <button class="filter-btn" data-filter="all-custom">自定义</button>
+        </div>
+        
+        <div class="agents-grid" id="agentsGrid">
+            <div class="loading">正在加载专家列表...</div>
+        </div>
+    </div>
+    
+    <div class="modal" id="agentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    
+    <script>
+        let allAgents = [];
+        let currentFilter = 'all';
+        
+        // 从 OpenCode 服务器获取 agent 列表
+        async function fetchAgents() {
+            try {
+                const response = await fetch('/agent');
+                if (!response.ok) {
+                    throw new Error('无法获取专家列表');
+                }
+                const agents = await response.json();
+                return agents;
+            } catch (error) {
+                console.error('获取专家列表失败:', error);
+                // 如果服务器不可用，返回示例数据
+                return getSampleAgents();
+            }
+        }
+        
+        // 示例数据（当服务器不可用时使用）
+        function getSampleAgents() {
+            return [
+                { name: "content-creator", description: "内容创作专家，擅长文案撰写、内容策划", type: "all" },
+                { name: "data-analytics-reporter", description: "数据分析专家，擅长数据可视化和报告", type: "all" },
+                { name: "frontend-developer", description: "前端开发专家，精通 React、Vue 等框架", type: "all" },
+                { name: "backend-architect", description: "后端架构专家，精通微服务和分布式系统", type: "all" },
+                { name: "software-architect", description: "软件架构专家，擅长系统设计和架构", type: "all" },
+                { name: "we-chat-mini-program-developer", description: "微信小程序开发专家", type: "all" },
+                { name: "tencent-security-expert", description: "安全专家，专注于网络安全和数据保护", type: "all" },
+                { name: "build", description: "构建和编译专家", type: "primary" },
+                { name: "compaction", description: "压缩和优化专家", type: "primary" },
+                { name: "explore", description: "代码探索和导航专家", type: "subagent" },
+                { name: "general", description: "通用助手", type: "subagent" },
+                { name: "plan", description: "规划和任务管理专家", type: "primary" },
+                { name: "summary", description: "总结和摘要专家", type: "primary" },
+                { name: "title", description: "标题生成专家", type: "primary" }
+            ];
+        }
+        
+        // 获取专家图标
+        function getAgentIcon(name) {
+            const icons = {
+                'content-creator': '✍️',
+                'data-analytics-reporter': '📊',
+                'frontend-developer': '🎨',
+                'backend-architect': '⚙️',
+                'software-architect': '🏗️',
+                'we-chat-mini-program-developer': '💬',
+                'tencent-security-expert': '🔒',
+                'build': '🔨',
+                'compaction': '📦',
+                'explore': '🔍',
+                'general': '🤖',
+                'plan': '📋',
+                'summary': '📝',
+                'title': '🏷️'
+            };
+            return icons[name] || '🤖';
+        }
+        
+        // 获取专家类型标签
+        function getTypeLabel(type) {
+            const labels = {
+                'primary': '主要',
+                'subagent': '子代理',
+                'all': '自定义',
+                'all-custom': '自定义'
+            };
+            return labels[type] || type;
+        }
+        
+        // 渲染专家卡片
+        function renderAgents(agents) {
+            const grid = document.getElementById('agentsGrid');
+            
+            if (agents.length === 0) {
+                grid.innerHTML = '<div class="loading">未找到匹配的专家</div>';
+                return;
+            }
+            
+            grid.innerHTML = agents.map(agent => `
+                <div class="agent-card" onclick="showAgentDetail('${agent.name}')">
+                    <div class="agent-header">
+                        <div class="agent-icon">${getAgentIcon(agent.name)}</div>
+                        <div class="agent-info">
+                            <div class="agent-name">${agent.name}</div>
+                            <span class="agent-type">${getTypeLabel(agent.type)}</span>
+                        </div>
+                    </div>
+                    <div class="agent-description">${agent.description || '暂无描述'}</div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); copyCommand('${agent.name}')">
+                            复制命令
+                        </button>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); showAgentDetail('${agent.name}')">
+                            详情
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 显示专家详情
+        function showAgentDetail(name) {
+            const agent = allAgents.find(a => a.name === name);
+            if (!agent) return;
+            
+            document.getElementById('modalTitle').textContent = agent.name;
+            document.getElementById('modalBody').innerHTML = `
+                <p><strong>类型:</strong> ${getTypeLabel(agent.type)}</p>
+                <p><strong>描述:</strong> ${agent.description || '暂无描述'}</p>
+                <p><strong>使用方法:</strong></p>
+                <div class="command-box">
+                    /agent ${agent.name}
+                    <button class="copy-btn" onclick="copyCommand('${agent.name}')">复制</button>
+                </div>
+                <p><strong>CLI 命令:</strong></p>
+                <div class="command-box">
+                    opencode --agent ${agent.name}
+                    <button class="copy-btn" onclick="copyToClipboard('opencode --agent ${agent.name}')">复制</button>
+                </div>
+                <p><strong>提示:</strong> 在 OpenCode TUI 中，按 Ctrl+A 打开 Agent 选择对话框，然后选择此专家。</p>
+            `;
+            
+            document.getElementById('agentModal').classList.add('active');
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('agentModal').classList.remove('active');
+        }
+        
+        // 复制命令
+        function copyCommand(name) {
+            copyToClipboard(`/agent ${name}`);
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已复制到剪贴板: ' + text);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                // 备用方案
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('已复制到剪贴板: ' + text);
+            });
+        }
+        
+        // 过滤专家
+        function filterAgents(filter) {
+            currentFilter = filter;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            
+            let filtered = allAgents;
+            
+            if (filter === 'primary') {
+                filtered = allAgents.filter(a => a.type === 'primary');
+            } else if (filter === 'subagent') {
+                filtered = allAgents.filter(a => a.type === 'subagent');
+            } else if (filter === 'all-custom') {
+                filtered = allAgents.filter(a => a.type === 'all' || a.type === 'all-custom');
+            }
+            
+            // 应用搜索
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(a => 
+                    a.name.toLowerCase().includes(searchTerm) ||
+                    (a.description && a.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderAgents(filtered);
+        }
+        
+        // 搜索专家
+        function searchAgents() {
+            filterAgents(currentFilter);
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('totalAgents').textContent = allAgents.length;
+            
+            const categories = new Set(allAgents.map(a => a.type));
+            document.getElementById('totalCategories').textContent = categories.size;
+        }
+        
+        // 初始化
+        async function init() {
+            try {
+                allAgents = await fetchAgents();
+                updateStats();
+                filterAgents('all');
+                
+                // 绑定事件
+                document.getElementById('searchInput').addEventListener('input', searchAgents);
+                
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        filterAgents(btn.dataset.filter);
+                    });
+                });
+                
+                // 点击模态框外部关闭
+                document.getElementById('agentModal').addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('agentModal')) {
+                        closeModal();
+                    }
+                });
+                
+                // ESC 键关闭模态框
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        closeModal();
+                    }
+                });
+                
+            } catch (error) {
+                document.getElementById('agentsGrid').innerHTML = `
+                    <div class="error">
+                        <p>加载专家列表失败</p>
+                        <p>${error.message}</p>
+                        <p>请确保 OpenCode 服务器正在运行</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 启动
+        init();
+    </script>
+</body>
+</html>
